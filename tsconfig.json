@@ -13,7 +13,10 @@
     "emitDecoratorMetadata": true,
 
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+
+    "moduleResolution": "node",
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
