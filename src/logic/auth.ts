@@ -1,5 +1,5 @@
 import { UserService } from "../service/userService";
-import { User } from "../entity/user";
+import { OtpPurpose, User } from "../entity/user";
 import jwt from "jsonwebtoken";
 import { config } from "../config";
 import { generateOtp } from "../utils/otp";
@@ -92,7 +92,7 @@ export class AuthLogic {
     await sendOtpEmail(user as User, otp);
   }
 
-  async verifyOtp(email: string, otp: string) {
+  async verifyOtp(email: string, otp: string, purpose: OtpPurpose) {
     const user = await this.userService.getUserByEmail(email);
     if (!user || !user.otp || user.otp !== otp) {
       throw new Error("Invalid OTP");
@@ -102,7 +102,16 @@ export class AuthLogic {
       throw new Error("OTP has expired");
     }
 
-    await this.userService.verifyEmail(user.id);
+    if (purpose !== "emailVerification" && purpose !== "passwordReset") {
+      throw new Error("This OTP cannot be used for this action.");
+    }
+
+    // 2. Conditionally call verifyEmail if the purpose matches
+    if (purpose === "emailVerification") {
+      // This is where we use the method you highlighted
+      await this.userService.verifyEmail(user.id);
+    }
+
     await this.userService.clearOtp(user.id);
 
     return { message: "Email verified successfully" };

@@ -61,9 +61,9 @@ export class AuthController {
     });
 
     verifyOtp = asyncHandler(async (req: Request, res: Response) => {
-        const { email, otp } = req.body;
+        const { email, otp, purpose } = req.body;
 
-        const result = await this.authLogic.verifyOtp(email, otp);
+        const result = await this.authLogic.verifyOtp(email, otp, purpose);
 
         res.status(200).json({
             status: "success",
