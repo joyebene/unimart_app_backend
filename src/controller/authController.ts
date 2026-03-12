@@ -28,6 +28,7 @@ export class AuthController {
             status: "success",
             data: {
                 accessToken,
+                refreshToken,
                 user,
             },
         });
