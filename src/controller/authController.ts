@@ -55,6 +55,7 @@ export class AuthController {
             status: "success",
             data: {
                 accessToken: tokens.accessToken,
+                refreshToken: tokens.refreshToken,
             },
         });
     });
