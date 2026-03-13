@@ -1,5 +1,5 @@
 import { UserService } from "../service/userService";
-import { OtpPurpose, User } from "../entity/user";
+import { User } from "../entity/user";
 import jwt from "jsonwebtoken";
 import { config } from "../config";
 import { generateOtp } from "../utils/otp";
@@ -92,7 +92,7 @@ export class AuthLogic {
     await sendOtpEmail(user as User, otp);
   }
 
-  async verifyOtp(email: string, otp: string, purpose: OtpPurpose) {
+  async verifyOtp(email: string, otp: string, purpose: string) {
     const user = await this.userService.getUserByEmail(email);
     if (!user || !user.otp || user.otp !== otp) {
       throw new Error("Invalid OTP");
