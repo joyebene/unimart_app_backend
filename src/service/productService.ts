@@ -36,10 +36,13 @@ export class ProductService {
   }
 
   async getFeaturedProducts() {
+    const count = await this.productRepo.count();
+    const randomOffset = Math.floor(Math.random() * count);
+
     return this.productRepo
       .createQueryBuilder("product")
       .leftJoinAndSelect("product.seller", "seller")
-      .orderBy("RANDOM()")
+      .skip(randomOffset)
       .take(20)
       .getMany();
   }
