@@ -52,9 +52,13 @@ export class AuthLogic {
       throw new Error("Invalid or expired refresh token");
     }
 
-    const user = await this.userService.getUserById(payload.id);
+    const user = await this.userService.getUserByEmail(payload.email);
+    
+    if (!user) {
+      throw new Error("User not found");
+    }
 
-    if (!user || user.refreshToken !== refreshToken) {
+    if (!user.refreshToken || user.refreshToken !== refreshToken) {
       throw new Error("Refresh token mismatch");
     }
 
@@ -94,6 +98,7 @@ export class AuthLogic {
 
   async verifyOtp(email: string, otp: string, purpose: string) {
     const user = await this.userService.getUserByEmail(email);
+    console.log(user);
     if (!user || !user.otp || user.otp !== otp) {
       throw new Error("Invalid OTP");
     }

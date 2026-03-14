@@ -34,20 +34,20 @@ export class User {
   @Column({ select: false })
   password!: string;
 
-  @Column({ select: false, nullable: true })
-  refreshToken!: string;
+  @Column({ type: "text", select: false, nullable: true })
+  refreshToken!: string | null;
 
-  @Column({ nullable: true })
-  avatarUrl!: string;
+  @Column({ type: "text", nullable: true })
+  avatarUrl!: string | null;
 
-  @Column({ nullable: true })
-  avatarCloudinaryId!: string;
+  @Column({ type: "text", nullable: true })
+  avatarCloudinaryId!: string | null;
 
-  @Column({ nullable: true })
-  bio!: string;
+  @Column({ type: "text", nullable: true })
+  bio!: string | null;
 
-  @Column({ nullable: true })
-  location!: string;
+  @Column({ type: "text", nullable: true })
+  location!: string | null;
 
   @Column()
   phone!: string;
@@ -57,11 +57,11 @@ export class User {
   isEmailVerified!: boolean;
 
   // OTP for email verification or password reset
-  @Column({ nullable: true, select: false })
-  otp!: string;
+  @Column({ type: "text", nullable: true, select: false })
+  otp!: string | null;
 
   @Column({ type: "timestamptz", nullable: true, select: false })
-  otpExpiresAt!: Date;
+  otpExpiresAt!: Date | null;
 
   @OneToMany(() => Product, (product) => product.seller)
   products!: Product[];
