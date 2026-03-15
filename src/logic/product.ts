@@ -39,10 +39,14 @@ export class ProductLogic {
       name: productData.name,
       category: productData.category,
       price: productData.price,
+      description: productData.description,
       imageUrl: image.url,
       imageCloudinaryId: image.cloudinaryId,
       seller: user as User,
     });
+
+    console.log(product);
+    
 
     return product;
   }

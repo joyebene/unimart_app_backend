@@ -22,6 +22,9 @@ export class Product {
   @Column("decimal", { precision: 10, scale: 2 })
   price!: number;
 
+  @Column( {nullable: true} )
+  description!: string;
+
   @Column()
   imageUrl!: string;
 
