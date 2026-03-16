@@ -23,7 +23,7 @@ export class ConversationLogic {
     participant.id!
   );
   if (existingConversation) {
-    throw new Error("Conversation already exists");
+    return existingConversation;
   }
 
   const newConversation = await this.conversationService.createConversation({
