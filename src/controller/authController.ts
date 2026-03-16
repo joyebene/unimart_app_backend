@@ -18,12 +18,14 @@ export class AuthController {
         const { accessToken, refreshToken, user } =
             await this.authLogic.login(req.body);
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            sameSite: "none",
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
-        });
+        // res.cookie("refreshToken", refreshToken, {
+        //     httpOnly: true,
+        //     sameSite: "none",
+        //     secure: process.env.NODE_ENV === "production",
+        //     maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
+        // });
+
+    
 
         res.status(200).json({
             status: "success",
@@ -44,9 +46,9 @@ export class AuthController {
             token = req.headers.authorization.split(' ')[1];
         }
 
-         if (!token) {
-            token = req.cookies?.refreshToken;
-        }
+        //  if (!token) {
+        //     token = req.cookies?.refreshToken;
+        // }
 
           if (!token) {
             res.status(401);
@@ -57,12 +59,14 @@ export class AuthController {
         const tokens = await this.authLogic.refreshToken(token);
 
         // rotate refresh token
-        res.cookie("refreshToken", tokens.refreshToken, {
-            httpOnly: true,
-            sameSite: "none",
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
-        });
+        // res.cookie("refreshToken", tokens.refreshToken, {
+        //     httpOnly: true,
+        //     sameSite: "none",
+        //     secure: process.env.NODE_ENV === "production",
+        //     maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
+        // });
+
+        
 
         res.status(200).json({
             status: "success",
@@ -127,7 +131,7 @@ export class AuthController {
             await this.authLogic.logout(userId);
         }
 
-        res.clearCookie("refreshToken");
+        // res.clearCookie("refreshToken");
 
         res.status(200).json({
             status: "success",
