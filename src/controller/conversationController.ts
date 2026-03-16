@@ -16,6 +16,8 @@ export class ConversationController {
     participantId
   );
 
+  
+
   res.status(201).json({
     status: "success",
     data: conversation,
@@ -27,6 +29,9 @@ export class ConversationController {
 
     const conversations =
       await this.conversationLogic.getUserConversations(userId!);
+
+      console.log(conversations);
+      
 
     res.status(200).json({
       status: "success",
