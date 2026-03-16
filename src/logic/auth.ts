@@ -31,7 +31,7 @@ export class AuthLogic {
     }
 
     const accessToken = jwt.sign({ id: user.id, email: user.email }, config.JWT_ACCESS_TOKEN!, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ id: user.id, email: user.email }, config.JWT_REFRESH_TOKEN!, { expiresIn: '7d' });
+    const refreshToken = jwt.sign({ id: user.id, email: user.email }, config.JWT_REFRESH_TOKEN!, { expiresIn: '365d' });
 
     await this.userService.setRefreshToken(user.id, refreshToken);
 
@@ -53,7 +53,7 @@ export class AuthLogic {
     }
 
     const user = await this.userService.getUserByEmail(payload.email);
-    
+
     if (!user) {
       throw new Error("User not found");
     }
@@ -72,7 +72,7 @@ export class AuthLogic {
     const newRefreshToken = jwt.sign(
       { id: user.id, email: user.email },
       config.JWT_REFRESH_TOKEN!,
-      { expiresIn: "7d" }
+      { expiresIn: "365d" }
     );
 
     await this.userService.setRefreshToken(user.id!, newRefreshToken);
