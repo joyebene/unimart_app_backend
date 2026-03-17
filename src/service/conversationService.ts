@@ -29,7 +29,7 @@ async getUserConversations(userId: string) {
       // Then, left join and select all participants for the filtered conversations
       .leftJoinAndSelect("conversation.participants", "participants")
       .leftJoinAndSelect("conversation.messages", "message")
-      // *** FIX 1: Explicitly select the lastRead column to make sure it's loaded ***
+      .leftJoinAndSelect("message.sender", "sender")
       .addSelect("conversation.lastRead")
       .orderBy("message.createdAt", "DESC")
       .getMany();
@@ -50,12 +50,12 @@ async getUserConversations(userId: string) {
 
       // Determine if unread for THIS user
       const isUnread =
-        lastMessage && (!lastReadDate || lastMessage.createdAt > lastReadDate);
+        lastMessage && lastMessage.sender?.id !== userId && (!lastReadDate || lastMessage.createdAt > lastReadDate);
 
       // Calculate unread count correctly
       const unreadCount = lastReadDate
-        ? conv.messages.filter((m) => m.createdAt > lastReadDate).length
-        : conv.messages.length; // If never read, count all messages
+        ? conv.messages.filter((m) => m.sender?.id !== userId && m.createdAt > lastReadDate).length
+        : conv.messages.filter((m) => m.sender?.id !== userId).length;
 
       return {
         id: conv.id,
