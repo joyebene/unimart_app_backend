@@ -29,6 +29,8 @@ async getUserConversations(userId: string) {
       // Then, left join and select all participants for the filtered conversations
       .leftJoinAndSelect("conversation.participants", "participants")
       .leftJoinAndSelect("conversation.messages", "message")
+      // *** FIX 1: Explicitly select the lastRead column to make sure it's loaded ***
+      .addSelect("conversation.lastRead")
       .orderBy("message.createdAt", "DESC")
       .getMany();
 
@@ -38,16 +40,29 @@ async getUserConversations(userId: string) {
 
       const lastMessage = conv.messages[0] ?? null;
 
+      // *** FIX 2: Use the correct property name 'lastRead' ***
+      const lastReadTimestampString = conv.lastRead?.[userId];
+
+      // *** FIX 3: Convert the timestamp string to a proper Date object before comparing ***
+      const lastReadDate = lastReadTimestampString
+        ? new Date(lastReadTimestampString)
+        : null;
+
       // Determine if unread for THIS user
-    const lastRead = conv.participantLastReadAt?.[userId];
-    const isUnread = lastMessage && (!lastRead || lastMessage.createdAt > lastRead);
-      
+      const isUnread =
+        lastMessage && (!lastReadDate || lastMessage.createdAt > lastReadDate);
+
+      // Calculate unread count correctly
+      const unreadCount = lastReadDate
+        ? conv.messages.filter((m) => m.createdAt > lastReadDate).length
+        : conv.messages.length; // If never read, count all messages
+
       return {
         id: conv.id,
         user: otherUser,
         lastMessage,
         isUnread,
-        unreadCount: conv.messages.filter(m => m.createdAt > lastRead!).length
+        unreadCount,
       };
     });
   }
@@ -66,18 +81,26 @@ async findConversationBetweenUsers(user1Id: string, user2Id: string) {
   }
 
 
-  // e.g. POST /conversations/:id/read
 async markConversationAsRead(conversationId: string, userId: string) {
-  const conv = await this.conversationRepo.findOneOrFail({
-    where: { id: conversationId },
-  });
+    
+    const conversation = await this.conversationRepo.findOne({
+      where: { id: conversationId },
+      select: ["lastRead"],
+    });
 
-  if (!conv.participantLastReadAt) {
-    conv.participantLastReadAt = {};
+    if (!conversation) {
+      throw new Error("Conversation not found");
+    }
+
+    // Update the lastRead object with the new timestamp for the user
+    const newLastRead = {
+      ...conversation.lastRead,
+      [userId]: new Date().toISOString(), // Use ISO string for timezone consistency
+    };
+
+    // Save the updated conversation
+    return this.conversationRepo.update(conversationId, {
+      lastRead: newLastRead,
+    });
   }
-
-  conv.participantLastReadAt[userId] = new Date();
-
-  await this.conversationRepo.save(conv);
-}
 }

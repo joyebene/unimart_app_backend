@@ -19,8 +19,8 @@ export class Conversation {
   @JoinTable()
   participants!: User[];
 
-  @Column({ type: "timestamp", nullable: true })
-  participantLastReadAt?: Record<string, Date>;
+  @Column("jsonb", { nullable: true, default: {} })
+  lastRead!: Record<string, string>;
 
   @OneToMany(() => Message, (msg) => msg.conversation)
   messages!: Message[];
