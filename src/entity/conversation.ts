@@ -4,7 +4,8 @@ import {
   OneToMany,
   CreateDateColumn,
   ManyToMany,
-  JoinTable
+  JoinTable,
+  Column
 } from "typeorm";
 import { User } from "./user";
 import { Message } from "./message";
@@ -17,6 +18,9 @@ export class Conversation {
   @ManyToMany(() => User, (user) => user.conversations)
   @JoinTable()
   participants!: User[];
+
+  @Column({ type: "timestamp", nullable: true })
+  participantLastReadAt?: Record<string, Date>;
 
   @OneToMany(() => Message, (msg) => msg.conversation)
   messages!: Message[];

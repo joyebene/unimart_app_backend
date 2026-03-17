@@ -36,13 +36,18 @@ async getUserConversations(userId: string) {
     return conversations.map((conv) => {
       const otherUser = conv.participants.find((p) => p.id !== userId);
 
-      // Because of the orderBy, the newest message is the first in the array
-      const lastMessage = conv.messages.length > 0 ? conv.messages[0] : null;
+      const lastMessage = conv.messages[0] ?? null;
+
+      // Determine if unread for THIS user
+    const lastRead = conv.participantLastReadAt?.[userId];
+    const isUnread = lastMessage && (!lastRead || lastMessage.createdAt > lastRead);
       
       return {
         id: conv.id,
         user: otherUser,
         lastMessage,
+        isUnread,
+        unreadCount: conv.messages.filter(m => m.createdAt > lastRead!).length
       };
     });
   }
@@ -59,4 +64,20 @@ async findConversationBetweenUsers(user1Id: string, user2Id: string) {
       .leftJoinAndSelect("conversation.participants", "participants")
       .getOne();
   }
+
+
+  // e.g. POST /conversations/:id/read
+async markConversationAsRead(conversationId: string, userId: string) {
+  const conv = await this.conversationRepo.findOneOrFail({
+    where: { id: conversationId },
+  });
+
+  if (!conv.participantLastReadAt) {
+    conv.participantLastReadAt = {};
+  }
+
+  conv.participantLastReadAt[userId] = new Date();
+
+  await this.conversationRepo.save(conv);
+}
 }

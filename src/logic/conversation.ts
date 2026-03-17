@@ -56,4 +56,11 @@ export class ConversationLogic {
   async deleteConversation(conversationId: string) {
     return this.conversationService.deleteConversation(conversationId);
   }
+
+  async markConversationAsRead(conversationId: string, userId: string) {
+    return this.conversationService.markConversationAsRead(
+      conversationId,
+      userId
+    );
+  }
 }

@@ -60,4 +60,16 @@ export class ConversationController {
       data: "chat deleted",
     });
   })
+
+  markConversationAsRead = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    const { id } = req.params;
+
+    await this.conversationLogic.markConversationAsRead(id as string, userId!);
+
+    res.status(200).json({
+      status: "success",
+      data: "conversation marked as read",
+    });
+  });
 }
