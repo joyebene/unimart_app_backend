@@ -5,6 +5,7 @@ import { config } from "../config";
 import { generateOtp } from "../utils/otp";
 import { sendOtpEmail } from "../utils/email";
 import { NotificationService } from "../service/notificationService";
+import bcrypt from "bcrypt";
 
 export class AuthLogic {
   private userService = new UserService();
@@ -89,6 +90,17 @@ export class AuthLogic {
       throw new Error("User not found");
     }
 
+    if (user.lastOtpSentAt) {
+      const diff = Date.now() - new Date(user.lastOtpSentAt).getTime();
+
+      if (diff < 60 * 1000) {
+        const secondsLeft = Math.ceil((60 * 1000 - diff) / 1000);
+        throw new Error(`Please wait ${secondsLeft}s before requesting another OTP`);
+      }
+    }
+
+    await this.userService.clearOtp(user.id);
+
     const otp = generateOtp();
     const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
@@ -99,7 +111,12 @@ export class AuthLogic {
   async verifyOtp(email: string, otp: string, purpose: string) {
     const user = await this.userService.getUserByEmail(email);
     console.log(user);
-    if (!user || !user.otp || user.otp !== otp) {
+    if (!user || !user.otp) {
+      throw new Error("Invalid OTP");
+    }
+    // Compare the hashed OTP
+    const isOtpValid = await bcrypt.compare(otp, user.otp);
+    if (!isOtpValid) {
       throw new Error("Invalid OTP");
     }
 
@@ -113,11 +130,12 @@ export class AuthLogic {
 
     // 2. Conditionally call verifyEmail if the purpose matches
     if (purpose === "emailVerification") {
-      // This is where we use the method you highlighted
+
       await this.userService.verifyEmail(user.id);
+
+      await this.userService.clearOtp(user.id);
     }
 
-    await this.userService.clearOtp(user.id);
 
     return { message: "Email verified successfully" };
   }
@@ -127,23 +145,31 @@ export class AuthLogic {
     return { message: "OTP sent to your email for password reset" };
   }
 
-  async resetPassword(email: string,  newPassword: string) {
+  async resetPassword(email: string, otp: string, newPassword: string) {
     const user = await this.userService.getUserByEmail(email);
-    if (!user) {
-      throw new Error("User not found");
+
+    if (!user) throw new Error("User not found");
+
+    if (user.otp !== otp || user.otpExpiresAt! < new Date()) {
+      throw new Error("Invalid or expired OTP");
     }
 
     await this.userService.resetUserPassword(user.id, newPassword);
+
+    await this.userService.clearOtp(user.id);
+
+    await this.userService.setRefreshToken(user.id, undefined);
 
     return { message: "Password reset successfully" };
   }
 
   async resendOtp(email: string) {
     await this.sendOtp(email);
+
     return { message: "OTP resent successfully" };
   }
 
-   async logout(userId: string) {
+  async logout(userId: string) {
     // Clear the refresh token from the database
     return this.userService.setRefreshToken(userId, undefined);
   }

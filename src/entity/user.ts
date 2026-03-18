@@ -63,6 +63,9 @@ export class User {
   @Column({ type: "timestamptz", nullable: true, select: false })
   otpExpiresAt!: Date | null;
 
+  @Column({ type: "timestamptz", nullable: true, select: false })
+  lastOtpSentAt?: Date | null;
+
   @OneToMany(() => Product, (product) => product.seller)
   products!: Product[];
 

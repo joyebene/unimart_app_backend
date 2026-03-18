@@ -21,17 +21,17 @@ export class UserService {
     });
   }
 
- // src/services/user.service.ts
-async getUserByEmail(email: string): Promise<User | null> {
-  return this.userRepository
-    .createQueryBuilder("u")                   
-    .where("u.email = :email", { email })
-    .addSelect("u.otp")
-    .addSelect("u.otpExpiresAt")
-    .addSelect("u.refreshToken")               
-    // DO NOT add "u.password" here — keep it hidden for security
-    .getOne();
-}
+  // src/services/user.service.ts
+  async getUserByEmail(email: string): Promise<User | null> {
+    return this.userRepository
+      .createQueryBuilder("u")
+      .where("u.email = :email", { email })
+      .addSelect("u.otp")
+      .addSelect("u.otpExpiresAt")
+      .addSelect("u.refreshToken")
+      // DO NOT add "u.password" here — keep it hidden for security
+      .getOne();
+  }
 
   // ---------------- Create a new user ----------------
   async createUser(data: {
@@ -127,37 +127,44 @@ async getUserByEmail(email: string): Promise<User | null> {
   }
 
   async resetUserPassword(userId: string, newPassword: string): Promise<void> {
-  const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({ where: { id: userId } });
 
-  if (!user) {
-    throw new Error("User not found");
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await this.userRepository.update(userId, {
+      password: hashedPassword,
+    });
   }
-
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-  await this.userRepository.update(userId, {
-    password: hashedPassword,
-  });
-}
 
   // ---------------- Set OTP ----------------
   async setOtp(userId: string, otp: string, otpExpire: Date) {
-    await this.userRepository.update(userId, { otp, otpExpiresAt: otpExpire });
+    // Hash the OTP before storing it
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
+    await this.userRepository.update(userId, {
+      otp: hashedOtp,
+      otpExpiresAt: otpExpire,
+      lastOtpSentAt: new Date(),
+    });
   }
 
   // ---------------- Clear OTP ----------------
   // src/services/user.service.ts
-async clearOtp(userId: string) {
-  await this.userRepository
-    .createQueryBuilder()
-    .update(User)                   
-    .set({ 
-      otp: null,                  
-      otpExpiresAt: null 
-    })
-    .where("id = :id", { id: userId })
-    .execute();
-}
+  async clearOtp(userId: string) {
+    await this.userRepository
+      .createQueryBuilder()
+      .update(User)
+      .set({
+        otp: null,
+        otpExpiresAt: null
+      })
+      .where("id = :id", { id: userId })
+      .execute();
+  }
 
 
 
