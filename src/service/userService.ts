@@ -126,6 +126,20 @@ async getUserByEmail(email: string): Promise<User | null> {
     await this.userRepository.update(userId, { isEmailVerified: true });
   }
 
+  async resetUserPassword(userId: string, newPassword: string): Promise<void> {
+  const user = await this.userRepository.findOne({ where: { id: userId } });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await this.userRepository.update(userId, {
+    password: hashedPassword,
+  });
+}
+
   // ---------------- Set OTP ----------------
   async setOtp(userId: string, otp: string, otpExpire: Date) {
     await this.userRepository.update(userId, { otp, otpExpiresAt: otpExpire });

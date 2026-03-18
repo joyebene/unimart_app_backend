@@ -133,7 +133,7 @@ export class AuthLogic {
       throw new Error("User not found");
     }
 
-    await this.userService.updateUser(user.id, { password: newPassword });
+    await this.userService.resetUserPassword(user.id, newPassword);
 
     return { message: "Password reset successfully" };
   }

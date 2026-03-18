@@ -100,7 +100,7 @@ export class AuthController {
     });
 
     resetPassword = asyncHandler(async (req: Request, res: Response) => {
-        const { email, otp, newPassword } = req.body;
+        const { email, newPassword } = req.body;
 
         const result = await this.authLogic.resetPassword(
             email,
