@@ -27,4 +27,5 @@ export class Conversation {
 
   @CreateDateColumn()
   createdAt!: Date;
+  
 }
