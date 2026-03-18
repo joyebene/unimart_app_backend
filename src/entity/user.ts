@@ -66,6 +66,9 @@ export class User {
   @Column({ type: "timestamptz", nullable: true, select: false })
   lastOtpSentAt?: Date | null;
 
+  @Column({ type: "int", default: 0 })
+  productCount!: number;
+
   @OneToMany(() => Product, (product) => product.seller)
   products!: Product[];
 
