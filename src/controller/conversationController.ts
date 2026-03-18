@@ -29,8 +29,6 @@ export class ConversationController {
 
     const conversations =
       await this.conversationLogic.getUserConversations(userId!);
-
-      console.log(conversations);
       
 
     res.status(200).json({
