@@ -17,6 +17,11 @@ export class ConversationLogic {
     throw new Error("User not found");
   }
 
+  if (user.id == participant.id) {
+    throw new Error("Cant Start a Coversation with your self!");
+  }
+
+
   // check if conversation already exists
   const existingConversation = await this.conversationService.findConversationBetweenUsers(
     user.id!,
