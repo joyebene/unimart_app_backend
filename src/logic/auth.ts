@@ -110,7 +110,7 @@ export class AuthLogic {
 
   async verifyOtp(email: string, otp: string, purpose: string) {
     const user = await this.userService.getUserByEmail(email);
-    console.log(user);
+
     if (!user || !user.otp) {
       throw new Error("Invalid OTP");
     }
@@ -150,7 +150,9 @@ export class AuthLogic {
 
     if (!user) throw new Error("User not found");
 
-    if (user.otp !== otp || user.otpExpiresAt! < new Date()) {
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
+    if (user.otp !== hashedOtp || user.otpExpiresAt! < new Date()) {
       throw new Error("Invalid or expired OTP");
     }
 
