@@ -101,7 +101,7 @@ export class UserService {
   }
 
   // ---------------- Set refresh token ----------------
-  async setRefreshToken(userId: string, token: string | undefined) {
+  async setRefreshToken(userId: string, token: string | null) {
     await this.userRepository.update(userId, { refreshToken: token });
   }
 

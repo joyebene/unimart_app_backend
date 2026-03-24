@@ -134,10 +134,12 @@ export class AuthLogic {
       await this.userService.verifyEmail(user.id);
 
       await this.userService.clearOtp(user.id);
+
+      return { message: "Email verified successfully" };
     }
 
 
-    return { message: "Email verified successfully" };
+    return { message: "OTP verified successfully" };
   }
 
   async forgotPassword(email: string) {
@@ -150,7 +152,7 @@ export class AuthLogic {
 
     if (!user) throw new Error("User not found");
 
-     // Compare the hashed OTP
+     
     const isOtpValid = await bcrypt.compare(otp, user.otp!);
     if (!isOtpValid) {
       throw new Error("Invalid OTP");
@@ -164,7 +166,7 @@ export class AuthLogic {
 
     await this.userService.clearOtp(user.id);
 
-    await this.userService.setRefreshToken(user.id, undefined);
+    await this.userService.setRefreshToken(user.id, null);
 
     return { message: "Password reset successfully" };
   }
@@ -177,6 +179,6 @@ export class AuthLogic {
 
   async logout(userId: string) {
     // Clear the refresh token from the database
-    return this.userService.setRefreshToken(userId, undefined);
+    return this.userService.setRefreshToken(userId, null);
   }
 }
