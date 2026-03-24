@@ -150,10 +150,14 @@ export class AuthLogic {
 
     if (!user) throw new Error("User not found");
 
-    const hashedOtp = await bcrypt.hash(otp, 10);
+     // Compare the hashed OTP
+    const isOtpValid = await bcrypt.compare(otp, user.otp!);
+    if (!isOtpValid) {
+      throw new Error("Invalid OTP");
+    }
 
-    if (user.otp !== hashedOtp || user.otpExpiresAt! < new Date()) {
-      throw new Error("Invalid or expired OTP");
+    if (user.otpExpiresAt! < new Date()) {
+      throw new Error("Expired OTP");
     }
 
     await this.userService.resetUserPassword(user.id, newPassword);
