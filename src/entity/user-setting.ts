@@ -17,6 +17,6 @@ export class UserSetting {
   @Column({ default: true })
   pushNotifications!: boolean;
 
-  @Column({ default: "system" })
+  @Column({ default: "light" })
   theme!: string; // light or dark or system
 }

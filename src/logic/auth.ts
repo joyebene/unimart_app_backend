@@ -86,11 +86,9 @@ export class AuthLogic {
 
   async sendOtp(email: string) {
     const user = await this.userService.getUserByEmail(email);
-    if (!user) {
-      throw new Error("User not found");
-    }
+    
 
-    if (user.lastOtpSentAt) {
+    if (user?.lastOtpSentAt) {
       const diff = Date.now() - new Date(user.lastOtpSentAt).getTime();
 
       if (diff < 60 * 1000) {
@@ -99,13 +97,15 @@ export class AuthLogic {
       }
     }
 
-    await this.userService.clearOtp(user.id);
+    await this.userService.clearOtp(user?.id!);
 
     const otp = generateOtp();
     const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
-    await this.userService.setOtp(user.id, otp, otpExpiresAt);
+    await this.userService.setOtp(user?.id!, otp, otpExpiresAt);
     await sendOtpEmail(user as User, otp);
+
+      return ("otp sent if email exists");
   }
 
   async verifyOtp(email: string, otp: string, purpose: string) {
