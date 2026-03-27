@@ -11,7 +11,7 @@ export class Message {
   @ManyToOne(() => User, (user) => user.messages)
   sender!: User;
 
-  @ManyToOne(() => Conversation, (conv) => conv.messages)
+  @ManyToOne(() => Conversation, ( conv ) => conv.messages, { onDelete: "CASCADE" })
   conversation!: Conversation;
 
   @Column("text")

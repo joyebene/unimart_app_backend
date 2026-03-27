@@ -22,7 +22,7 @@ export class Conversation {
   @Column("jsonb", { nullable: true, default: {} })
   lastRead!: Record<string, string>;
 
-  @OneToMany(() => Message, (msg) => msg.conversation, { onDelete: "CASCADE" })
+  @OneToMany(() => Message, ( msg ) => msg.conversation)
   messages!: Message[];
 
   @CreateDateColumn()

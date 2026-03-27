@@ -36,13 +36,13 @@ export class ConversationLogic {
   });
 
   await this.notificationService.createNotification(
-    participant as User,
+    user as User,
     "New Conversation Started",
     `You have started a new conversation with ${participant.fullName}`
   );
 
   await this.notificationService.createNotification(
-    user as User,
+    participant as User,
     "New Conversation Started",
     `${user.fullName} has started a new conversation with you.`
   );
