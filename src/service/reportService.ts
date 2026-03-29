@@ -24,7 +24,7 @@ export class ReportService {
   }
 
   async getReportById(id: string): Promise<Report | null> {
-    return this.reportRepository.findOne({ where: { id } });
+    return this.reportRepository.findOne({ where: { id }, relations: ["reporter"], });
   }
 
   async updateReportStatus(id: string, status: string): Promise<Report | null> {
