@@ -62,8 +62,8 @@ console.log(report);
     return {
       ...report,
       reporter: {
-        id: report.reporter.id,
-        fullName: report.reporter.fullName,
+        id: report.reporter.id!,
+        fullName: report.reporter.fullName!,
       },
       reportedEntity,
     };
