@@ -41,24 +41,8 @@ export class ReportLogic {
 
   async getReports() {
     const reports = await this.reportService.getReports();
-
-    const detailedReports = await Promise.all(
-      reports.map(async (report) => {
-        let reportedEntity;
-        if (report.type === "user") {
-          reportedEntity = await this.userService.getUserById(report.reportedId);
-        } else if (report.type === "product") {
-          reportedEntity = await this.productService.getProductById(
-            report.reportedId
-          );
-        }
-        // Attach the reportedEntity to the existing report object to preserve the reporter relation
-        (report as any).reportedEntity = reportedEntity;
-        return report;
-      })
-    );
-
-    return detailedReports;
+  
+    return reports;
   }
 
   async getReportDetails(id: string) {
@@ -74,7 +58,14 @@ export class ReportLogic {
       reportedEntity = await this.productService.getProductById(report.reportedId);
     }
 
-    return { ...report, reportedEntity };
+    return {
+      ...report,
+      reporter: {
+        id: report.reporter.id,
+        fullName: report.reporter.fullName,
+      },
+      reportedEntity,
+    };
   }
 
   async updateReportStatus(id: string, status: string) {
