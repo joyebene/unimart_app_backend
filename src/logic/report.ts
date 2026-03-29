@@ -50,6 +50,7 @@ export class ReportLogic {
     if (!report) {
       return null;
     }
+console.log(report);
 
     let reportedEntity;
     if (report.type === "user") {
