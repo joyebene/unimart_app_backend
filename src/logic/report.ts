@@ -41,8 +41,24 @@ export class ReportLogic {
 
   async getReports() {
     const reports = await this.reportService.getReports();
-  
-    return reports;
+
+    const detailedReports = await Promise.all(
+      reports.map(async (report) => {
+        let reportedEntity;
+        if (report.type === "user") {
+          reportedEntity = await this.userService.getUserById(report.reportedId);
+        } else if (report.type === "product") {
+          reportedEntity = await this.productService.getProductById(
+            report.reportedId
+          );
+        }
+        // Attach the reportedEntity to the existing report object to preserve the reporter relation
+        (report as any).reportedEntity = reportedEntity;
+        return report;
+      })
+    );
+
+    return detailedReports;
   }
 
   async getReportDetails(id: string) {
