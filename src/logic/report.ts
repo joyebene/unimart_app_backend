@@ -10,7 +10,7 @@ export class ReportLogic {
   private notificationService = new NotificationService;
   private productService = new ProductService;
 
-  async createReport(reporterId: string, type: string, reason: string, reportedId : string) {
+  async createReport(reporterId: string, type: string, reason: string, reportedId: string) {
     const reporter = await this.userService.getUserById(reporterId);
     if (!reporter) {
       throw new Error("Reporter not found");
@@ -41,7 +41,7 @@ export class ReportLogic {
 
   async getReports() {
     const reports = await this.reportService.getReports();
-  
+
     return reports;
   }
 
@@ -50,7 +50,7 @@ export class ReportLogic {
     if (!report) {
       return null;
     }
-console.log(report);
+    console.log(report);
 
     let reportedEntity;
     if (report.type === "user") {
@@ -61,10 +61,6 @@ console.log(report);
 
     return {
       ...report,
-      reporter: {
-        id: report.reporter.id!,
-        fullName: report.reporter.fullName!,
-      },
       reportedEntity,
     };
   }
