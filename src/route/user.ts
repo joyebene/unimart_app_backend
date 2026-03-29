@@ -11,6 +11,7 @@ const controller = new UserController();
 router.get("/", controller.getAllUsers);
 router.get("/me", authenticateUser, controller.getAuthenticatedUser);
 router.put("/me", authenticateUser, controller.updateUser);
+router.put("/:userId", authenticateUser, controller.updateUserStatus);
 router.put("/me/avatar", authenticateUser, upload.single("avatar"), controller.updateAvatar);
 router.get("/:id", controller.getUserById);
 

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { UserLogic } from "../logic/user";
+import { UserStatus } from "../entity/user";
 
 export class UserController {
   private userLogic = new UserLogic();
@@ -92,9 +93,9 @@ export class UserController {
     const { userId } = req.params as {userId: string};
     const { status } = req.body;
 
-    if (!["ACTIVE", "BANNED"].includes(status)) {
+    if (!Object.values(UserStatus).includes(status)) {
       res.status(400);
-      throw new Error("Invalid status");
+      throw new Error("Invalid status. Valid statuses are 'active' and 'banned'.");
     }
 
     const user = await this.userLogic.updateUserStatus(userId, status);
