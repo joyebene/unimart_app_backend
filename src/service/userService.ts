@@ -17,7 +17,7 @@ export class UserService {
   async getUserById(userId: string): Promise<Partial<User> | null> {
     return this.userRepository.findOne({
       where: { id: userId },
-      select: ["id", "fullName", "email", "avatarUrl", "bio", "location", "phone", "createdAt", "productCount"],
+      select: ["id", "fullName", "email", "avatarUrl", "bio", "location", "phone", "createdAt", "productCount", "status"],
     });
   }
 
