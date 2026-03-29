@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddUserStatus1774792466666 implements MigrationInterface {
-    name = 'AddUserStatus1774792466666'
+export class AddUserStatus1774792800066 implements MigrationInterface {
+    name = 'AddUserStatus1774792800066'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "unimart"."users_status_enum" AS ENUM('active', 'banned')`);
