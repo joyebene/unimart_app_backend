@@ -65,25 +65,34 @@ export class ProductLogic {
   }
 
   async deleteProduct(productId: string, userId: string) {
+
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
     const product = await this.productService.getProductById(productId);
 
     if (!product) {
       throw new Error("Product not found");
     }
 
-    if (product.seller.id !== userId) {
-      throw new Error("Unauthorized to delete this product");
+    if (user?.email !== "admin@unimart.com") {
+      if (product.seller.id !== userId) {
+        throw new Error("Unauthorized to delete this product");
+      }
     }
+
+
 
     // delete cloudinary image
     await deleteFromCloudinary([product.imageCloudinaryId]);
 
     await this.productService.deleteProduct(productId);
 
-    const user = await this.userService.getUserById(userId);
-    if (user) {
-      user.productCount = Math.max((user.productCount || 1) - 1, 0);
-      await this.userService.updateUser(user.id!, { productCount: user.productCount });
+    const seller = product.seller;
+    if (seller) {
+      seller.productCount = Math.max((seller.productCount || 1) - 1, 0);
+      await this.userService.updateUser(seller.id!, { productCount: seller.productCount });
     }
 
     return { message: "Product deleted successfully" };
