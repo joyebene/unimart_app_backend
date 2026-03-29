@@ -7,6 +7,7 @@ const reportController = new ReportController();
 
 reportRoutes.post("/", authenticateUser, reportController.createReport);
 reportRoutes.get("/", authenticateUser, reportController.getReports);
-reportRoutes.put("/:id", authenticateUser, reportController.updateReportStatus);
+reportRoutes.get("/:id", authenticateUser, reportController.getReportDetails);
+reportRoutes.put("/:id/status", authenticateUser, reportController.updateReportStatus);
 
 export default reportRoutes;

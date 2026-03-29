@@ -87,4 +87,26 @@ export class UserController {
       data: user,
     });
   });
+
+  updateUserStatus = asyncHandler(async (req: Request, res: Response) => {
+    const { userId } = req.params as {userId: string};
+    const { status } = req.body;
+
+    if (!["ACTIVE", "BANNED"].includes(status)) {
+      res.status(400);
+      throw new Error("Invalid status");
+    }
+
+    const user = await this.userLogic.updateUserStatus(userId, status);
+
+    if (!user) {
+      res.status(404);
+      throw new Error("User not found");
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: user,
+    });
+  });
 }

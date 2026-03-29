@@ -1,5 +1,5 @@
 import { UserService } from "../service/userService";
-import { User } from "../entity/user";
+import { User, UserStatus } from "../entity/user";
 
 import { uploadFilesToCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
 
@@ -24,6 +24,10 @@ export class UserLogic {
     currentPassword?: string
   ) {
     return this.userService.updateUser(userId, updates, currentPassword);
+  }
+
+  async updateUserStatus(userId: string, status: UserStatus) {
+    return this.userService.updateUserStatus(userId, status);
   }
 
   async updateAvatar(userId: string, file: Express.Multer.File) {

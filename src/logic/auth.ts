@@ -31,6 +31,11 @@ export class AuthLogic {
       throw new Error("Invalid credentials");
     }
 
+    // Check if the user is banned
+    if (user.status === "banned") {
+      throw new Error("Your account has been suspended. Please contact support.");
+    }
+
     const accessToken = jwt.sign({ id: user.id, email: user.email }, config.JWT_ACCESS_TOKEN!, { expiresIn: '15m' });
     const refreshToken = jwt.sign({ id: user.id, email: user.email }, config.JWT_REFRESH_TOKEN!, { expiresIn: '365d' });
 

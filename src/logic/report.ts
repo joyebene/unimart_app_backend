@@ -40,7 +40,25 @@ export class ReportLogic {
   }
 
   async getReports() {
-    return this.reportService.getReports();
+    const reports = await this.reportService.getReports();
+  
+    return reports;
+  }
+
+  async getReportDetails(id: string) {
+    const report = await this.reportService.getReportById(id);
+    if (!report) {
+      return null;
+    }
+
+    let reportedEntity;
+    if (report.type === "user") {
+      reportedEntity = await this.userService.getUserById(report.reportedId);
+    } else if (report.type === "product") {
+      reportedEntity = await this.productService.getProductById(report.reportedId);
+    }
+
+    return { ...report, reportedEntity };
   }
 
   async updateReportStatus(id: string, status: string) {

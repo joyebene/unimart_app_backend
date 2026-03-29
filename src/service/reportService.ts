@@ -23,6 +23,10 @@ export class ReportService {
     });
   }
 
+  async getReportById(id: string): Promise<Report | null> {
+    return this.reportRepository.findOne({ where: { id } });
+  }
+
   async updateReportStatus(id: string, status: string): Promise<Report | null> {
     const report = await this.reportRepository.findOne({ where: { id } });
     if (!report) {

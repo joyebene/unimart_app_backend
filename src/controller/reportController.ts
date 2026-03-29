@@ -17,6 +17,15 @@ export class ReportController {
     res.status(200).json({ status: "success", data: reports });
   });
 
+  getReportDetails = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const report = await this.reportLogic.getReportDetails(id as string);
+    if (!report) {
+       res.status(404).json({ message: "Report not found" });
+    }
+    res.status(200).json({ status: "success", data: report });
+  });
+
   updateReportStatus = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const { status } = req.body;

@@ -14,10 +14,15 @@ import { SupportMessage } from "./support-message";
 import { Report } from "./report";
 import { Conversation } from "./conversation";
 import { Message } from "./message";
-import { Feedback } from "./feedback";
-import { Notification } from "./notification";
-import { ManyToMany } from "typeorm";
-import { Device } from "./device";
+ import { Feedback } from "./feedback";
+ import { Notification } from "./notification";
+ import { ManyToMany } from "typeorm";
+ import { Device } from "./device";
+
+ export enum UserStatus {
+  ACTIVE = "active",
+  BANNED = "banned",
+ }
 
 @Entity("users")
 export class User {
@@ -68,6 +73,13 @@ export class User {
 
   @Column({ type: "int", default: 0 })
   productCount!: number;
+
+  @Column({
+    type: "enum",
+    enum: UserStatus,
+    default: UserStatus.ACTIVE,
+  })
+  status!: UserStatus;
 
   @OneToMany(() => Product, (product) => product.seller)
   products!: Product[];

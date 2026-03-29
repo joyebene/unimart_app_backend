@@ -1,6 +1,6 @@
 // src/services/user.service.ts
 import { getRepository } from "../connection/data-source";
-import { User } from "../entity/user";
+import { User, UserStatus } from "../entity/user";
 import bcrypt from "bcryptjs";
 
 export class UserService {
@@ -175,6 +175,11 @@ export class UserService {
 
   async delete(id: string) {
     return this.userRepository.delete(id);
+  }
+
+  async updateUserStatus(userId: string, status: UserStatus): Promise<User | null> {
+    await this.userRepository.update(userId, { status });
+    return this.userRepository.findOne({ where: { id: userId } });
   }
 
 }
