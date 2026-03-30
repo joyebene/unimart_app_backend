@@ -57,6 +57,8 @@ export class ReportLogic {
       reportedEntity = await this.userService.getUserById(report.reportedId);
     } else if (report.type === "product") {
       reportedEntity = await this.productService.getProductById(report.reportedId);
+      console.log(`reportedEntity`, reportedEntity);
+      
     }
 
     return {
