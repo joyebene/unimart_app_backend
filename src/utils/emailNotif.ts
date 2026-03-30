@@ -1,8 +1,8 @@
-import sgMail from "@sendgrid/mail";
+import { Resend } from "resend";
 import { config } from "../config";
 import { User } from "../entity/user";
 
-sgMail.setApiKey(config.SENDGRID_API_KEY!);
+const resend = new Resend(config.RESEND_API_KEY!);
 
 /**
  * Reusable midnight navy template builder (same premium look as all your other emails)
@@ -62,27 +62,23 @@ const createMidnightNavyNotification = (title: string, subtitle: string, mainCon
  * Use this for order updates, account alerts, promotions, system messages, etc.
  */
 export const sendNotificationEmail = async (
-  user: User, 
-  subject: string, 
-  body: string               // ← Your conditional HTML goes here
+  user: User,
+  subject: string,
+  body: string
 ): Promise<void> => {
-  
-  // You can customize these per call, or pass them if you want to extend the function later
-  const title = subject;                    // or extract part of subject
+  const title = subject;
   const subtitle = "UniMart Notification";
 
   const htmlContent = createMidnightNavyNotification(title, subtitle, body);
 
-  const msg = {
-    to: user.email,
-    from: config.SENDGRID_FROM_EMAIL!,
-    subject: subject,
-    text: `UniMart Notification: ${subject}`,   // clean plain-text fallback
-    html: htmlContent,
-  };
-
   try {
-    await sgMail.send(msg);
+    await resend.emails.send({
+      from: "UniMart <onboarding@resend.dev>",
+      to: user.email,
+      subject: subject,
+      html: htmlContent,
+      text: `UniMart Notification: ${subject}`, // clean plain-text fallback
+    });
     console.log(`✅ Notification email sent to ${user.email}`);
   } catch (error) {
     console.error("Error sending notification email:", error);
