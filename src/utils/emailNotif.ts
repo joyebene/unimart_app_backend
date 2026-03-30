@@ -43,7 +43,7 @@ const createMidnightNavyNotification = (title: string, subtitle: string, mainCon
                     <!-- Footer -->
                     <tr>
                         <td style="background-color: #0a2540; padding: 30px 40px; text-align: center; border-top: 1px solid #1e3a8a;">
-                            <p style="margin: 0; color: #64748b; font-size: 12px;">© ${new Date().getFullYear()} UniMart • Bauchi, Nigeria</p>
+                            <p style="margin: 0; color: #64748b; font-size: 12px;">© ${new Date().getFullYear()} UniMart • Abuja, Nigeria</p>
                             <p style="margin: 6px 0 0; color: #64748b; font-size: 12px;">Midnight Navy • Built for speed &amp; security</p>
                         </td>
                     </tr>

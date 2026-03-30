@@ -39,7 +39,7 @@ export const sendOtpEmail = async (user: User, otp: string): Promise<void> => {
     </div>
 
     <div style="background:#0a2540;padding:20px;text-align:center;color:#64748b;font-size:12px;">
-      © ${new Date().getFullYear()} UniMart • Bauchi
+      © ${new Date().getFullYear()} UniMart • Abuja
     </div>
 
   </div>
