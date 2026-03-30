@@ -9,7 +9,7 @@ export class UserService {
   // ---------------- Get all users ----------------
   async getAllUsers(): Promise<Partial<User>[]> {
     return this.userRepository.find({
-      select: ["id", "fullName", "email", "avatarUrl", "bio", "location", "phone", "createdAt"],
+      select: ["id", "fullName", "email", "avatarUrl", "bio", "location", "phone", "createdAt", "status"],
     });
   }
 
