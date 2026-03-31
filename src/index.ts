@@ -36,7 +36,7 @@ declare module "express-serve-static-core" {
 }
 
 AppDataSource.initialize()
-    .then(() => {
+    .then(async() => {
         console.log("Database connected successfully");
 
         const app = express();
