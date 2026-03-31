@@ -41,7 +41,7 @@ export class AuthLogic {
 
     await this.userService.setRefreshToken(user.id, refreshToken);
 
-    return { accessToken, refreshToken, user: { id: user.id, email: user.email, fullName: user.fullName } };
+    return { accessToken, refreshToken, user: { id: user.id, email: user.email, fullName: user.fullName, emailVerified: user.isEmailVerified } };
   }
 
 
