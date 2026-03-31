@@ -31,6 +31,9 @@ export class AuthLogic {
       throw new Error("Invalid credentials");
     }
 
+    console.log(user);
+    
+
     // Check if the user is banned
     if (user.status === "banned") {
       throw new Error("Your account has been suspended. Please contact support.");
