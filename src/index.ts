@@ -14,6 +14,8 @@ import { config } from "./config";
 import { errorHandler } from "./middleware/errorHandler";
 import rootRoute from "./route/rootRoute";
 import { initSocket } from "./utils/socket";
+import { RedisStore } from "connect-redis";
+import { createClient } from "redis";
 
 
 
@@ -42,8 +44,18 @@ AppDataSource.initialize()
 
         initSocket(httpServer);
 
+        const redisClient = createClient({ url: config.REDIS_URL });
+        await redisClient.connect();
+        console.log("Redis connected successfully");
+
+        const redisStore = new RedisStore({
+            client: redisClient,
+            prefix: "session:",
+        });
+
         app.use(
             session({
+                store: redisStore,
                 secret: config.JWT_ACCESS_TOKEN!,
                 resave: false,
                 saveUninitialized: false,
@@ -78,7 +90,7 @@ const routes = (app: Application) => {
         res.json({ message: "Unimart API" });
     });
 
-      app.use("/api/v1", rootRoute);
+    app.use("/api/v1", rootRoute);
 
     app.use((_req, res) => {
         res.status(404).json({ message: "Page not found" });

@@ -16,6 +16,9 @@ export const config = {
 
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
   SENDGRID_FROM_EMAIL: process.env.SENDGRID_FROM_EMAIL,
-  
+
   RESEND_API_KEY: process.env.RESEND_API_KEY,
+
+  
+  REDIS_URL: process.env.REDIS_URL,
 };
