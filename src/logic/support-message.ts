@@ -18,6 +18,10 @@ export class SupportMessageLogic {
     return this.supportMessageService.getSupportMessages(userId);
   }
 
+  async getAllSupportMessages() {
+    return this.supportMessageService.getAllSupportMessages();
+  }
+
   async updateSupportMessageStatus(id: string, status: string) {
     const supportMessage = await this.supportMessageService.updateSupportMessageStatus(id, status);
     if (!supportMessage) {

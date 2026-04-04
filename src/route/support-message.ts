@@ -7,6 +7,7 @@ const supportMessageController = new SupportMessageController();
 
 supportMessageRoutes.post("/", authenticateUser, supportMessageController.createSupportMessage);
 supportMessageRoutes.get("/", authenticateUser, supportMessageController.getSupportMessages);
+supportMessageRoutes.get("/all", authenticateUser, supportMessageController.getAllSupportMessages);
 supportMessageRoutes.put("/:id", authenticateUser, supportMessageController.updateSupportMessageStatus);
 
 export default supportMessageRoutes;

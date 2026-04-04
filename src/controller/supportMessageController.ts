@@ -18,6 +18,13 @@ export class SupportMessageController {
     res.status(200).json({ status: "success", data: supportMessages });
   });
 
+  getAllSupportMessages = asyncHandler(async (req: Request, res: Response) => {
+    const supportMessages = await this.supportMessageLogic.getAllSupportMessages();
+    res.status(200).json({ status: "success", data: supportMessages });
+  });
+
+
+
   updateSupportMessageStatus = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const { status } = req.body;

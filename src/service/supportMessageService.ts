@@ -21,6 +21,12 @@ export class SupportMessageService {
     });
   }
 
+  async getAllSupportMessages(): Promise<SupportMessage[]> {
+    return this.supportMessageRepository.find({ 
+      order: { createdAt: "DESC" },
+    });
+  }
+
   async updateSupportMessageStatus(
     id: string,
     status: string
