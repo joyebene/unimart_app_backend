@@ -23,6 +23,7 @@ export class SupportMessageService {
 
   async getAllSupportMessages(): Promise<SupportMessage[]> {
     return this.supportMessageRepository.find({ 
+      relations: ["user"],
       order: { createdAt: "DESC" },
     });
   }
