@@ -1,64 +1,63 @@
-import * as dotenv from "dotenv";
-dotenv.config();
-
-import { Resend } from "resend";
-
+import { BrevoClient } from "@getbrevo/brevo";
 import { User } from "../entity/user";
 import { config } from "../config";
 
-const resend = new Resend(config.RESEND_API_KEY!);
+
+const brevo = new BrevoClient({
+  apiKey: config.BREVO_API_KEY!,
+});
 
 export const sendOtpEmail = async (user: User, otp: string): Promise<void> => {
-    const htmlContent = `
+  const htmlContent = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Your UniMart OTP</title>
+<style>
+  body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+  .container { max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 40px; border: 1px solid #dddddd; text-align: center; }
+  .header h1 { margin: 0; font-size: 28px; color: #333333; }
+  .content p { color: #555555; font-size: 16px; }
+  .otp-code { font-size: 40px; font-weight: bold; letter-spacing: 6px; color: #000000; margin: 30px 0; }
+  .footer { margin-top: 30px; font-size: 12px; color: #888888; }
+</style>
 </head>
-
-<body style="margin:0;padding:0;background-color:#0a2540;font-family:Arial,sans-serif;">
-  <div style="max-width:600px;margin:40px auto;background:#112a5e;border-radius:12px;overflow:hidden;">
-    
-    <div style="padding:30px;text-align:center;background:#0a2540;">
-      <h1 style="color:#fff;margin:0;">UNIMART</h1>
-      <p style="color:#60a5fa;font-size:12px;">CAMPUS • SECURE • INSTANT</p>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>UNIMART</h1>
     </div>
-
-    <div style="padding:30px;text-align:center;">
-      <p style="color:#cbd5e1;">Your One-Time Password</p>
-      <h2 style="font-size:40px;letter-spacing:8px;color:#fff;">${otp}</h2>
-      <p style="color:#94a3b8;">Expires in 5 minutes</p>
+    <div class="content">
+      <p>Your One-Time Password is:</p>
+      <div class="otp-code">${otp}</div>
+      <p>This code will expire in 5 minutes.</p>
+      <p>If you did not request this code, you can safely ignore this email.</p>
     </div>
-
-    <div style="padding:0 30px 30px;color:#cbd5e1;">
-      <p>Hello,</p>
-      <p>Use the code above to complete your action on UniMart.</p>
-      <p>If you didn’t request this, ignore this email.</p>
+    <div class="footer">
+      <p>&copy; ${new Date().getFullYear()} UniMart. All rights reserved.</p>
     </div>
-
-    <div style="background:#0a2540;padding:20px;text-align:center;color:#64748b;font-size:12px;">
-      © ${new Date().getFullYear()} UniMart • Abuja
-    </div>
-
   </div>
 </body>
 </html>
 `;
 
-    try {
-        const response = await resend.emails.send({
-            from: "Unimart <onboarding@resend.dev>",
-            to: user.email,
-            subject: "Your UniMart Verification Code",
-            html: htmlContent,
-            text: `Your OTP is ${otp}. It expires in 5 minutes.`,
-            replyTo: "unimart569569@gmail.com",
-        });
+  try {
 
-    } catch (error) {
-        console.error("❌ Resend error:", error);
-        throw new Error("Failed to send OTP email");
-    }
+    await brevo.transactionalEmails.sendTransacEmail({
+
+      subject: "Your UniMart Verification Code",
+      htmlContent: htmlContent,
+      sender: { name: "UniMart", email: config.BREVO_FROM_EMAIL! },
+      to: [{ email: user.email }],
+      textContent: `Your OTP is ${otp}. It expires in 5 minutes.`,
+
+    })
+
+    console.log(`✅ OTP email sent to ${user.email} via Brevo`);
+  } catch (error) {
+    console.error("❌ Brevo error:", error);
+    throw new Error("Failed to send OTP email");
+  }
 };

@@ -14,8 +14,8 @@ export const config = {
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "15m",
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
 
-  SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
-  SENDGRID_FROM_EMAIL: process.env.SENDGRID_FROM_EMAIL,
+  BREVO_API_KEY: process.env.BREVO_API_KEY,
+  BREVO_FROM_EMAIL: process.env.BREVO_FROM_EMAIL,
 
   RESEND_API_KEY: process.env.RESEND_API_KEY,
 

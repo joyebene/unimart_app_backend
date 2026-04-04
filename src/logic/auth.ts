@@ -30,8 +30,6 @@ export class AuthLogic {
     if (!user) {
       throw new Error("Invalid credentials");
     }
-
-    console.log(user);
     
 
     // Check if the user is banned
