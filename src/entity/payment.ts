@@ -4,13 +4,6 @@ import { User } from "./user";
 export type PaymentType = "boost" | "featurebadge";
 export type PaymentStatus = "pending" | "completed" | "failed";
 
-export interface PaymentProof {
-  url: string;
-  cloudinaryId: string;
-  fileName: string;
-  uploadedAt: string;
-}
-
 @Entity("payments")
 export class Payment {
   @PrimaryGeneratedColumn("uuid")
@@ -29,7 +22,10 @@ export class Payment {
   amount!: number;
 
   @Column({ type: "jsonb", nullable: true })
-  proof?: PaymentProof[];
+  proof?: string;
+
+  @Column({ nullable: true })
+  proofCloudinaryId?: string;
 
   @Column({ type: "enum", enum: ["pending", "completed", "failed"], default: "pending" })
   status!: PaymentStatus;

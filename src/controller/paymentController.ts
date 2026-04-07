@@ -15,7 +15,7 @@ export class PaymentController {
         "boost",
         reference,
         Number(amount),
-        req.files as Express.Multer.File[]
+        req.file as Express.Multer.File
       );
       res.status(201).json({ success: true, payment });
     } catch (err: any) {
@@ -33,7 +33,7 @@ export class PaymentController {
         "featurebadge",
         reference,
         Number(amount),
-        req.files as Express.Multer.File[]
+        req.file as Express.Multer.File
       );
       res.status(201).json({ success: true, payment });
     } catch (err: any) {

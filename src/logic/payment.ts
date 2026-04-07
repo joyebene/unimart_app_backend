@@ -13,26 +13,21 @@ export class PaymentLogic {
     type: "boost" | "featurebadge",
     reference: string,
     amount: number,
-    files: Express.Multer.File[]
+    file: Express.Multer.File
   ) {
     const user = await this.userService.getUserById(userId);
     if (!user) throw new Error("User not found");
 
-    if (!files || files.length === 0) throw new Error("Payment proof is required");
+    if (!file) throw new Error("Payment proof is required");
 
     // Upload proof to Cloudinary
-    const uploaded: UploadedFileInfo[] = await uploadFilesToCloudinary(files.map(f => ({
-      buffer: f.buffer,
-      originalname: f.originalname,
-    })), "image", userId);
+    const uploaded: UploadedFileInfo[] = await uploadFilesToCloudinary([{
+      buffer: file.buffer,
+      originalname: file.originalname,
+    }], "image", userId);
 
-    // Map uploaded files to PaymentProof
-    const proof = uploaded.map(f => ({
-      url: f.url,
-      cloudinaryId: f.cloudinaryId,
-      fileName: f.fileName,
-      uploadedAt: f.uploadedAt,
-    }));
+  
+    const proof = uploaded[0]
 
     // Save payment in DB with status "pending"
     return this.paymentService.createPayment({
@@ -40,7 +35,8 @@ export class PaymentLogic {
       type,
       reference,
       amount,
-      proof,
+      proof: proof.url,
+      proofCloudinaryId: proof.cloudinaryId,
       status: "pending",
     });
   }
