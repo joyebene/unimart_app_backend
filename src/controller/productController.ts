@@ -28,8 +28,14 @@ export class ProductController {
         res.status(200).json({ status: "success", data: product });
     });
 
-    getUserProducts = asyncHandler(async (req: Request, res: Response) => {
+    getLoggedInUserProducts = asyncHandler(async (req: Request, res: Response) => {
         const userId = req.user!.id;
+        const products = await this.productLogic.getUserProducts(userId);
+        res.status(200).json({ status: "success", data: products });
+    });
+
+    getUserProducts = asyncHandler(async (req: Request, res: Response) => {
+        const userId = req.params.id as string;
         const products = await this.productLogic.getUserProducts(userId);
         res.status(200).json({ status: "success", data: products });
     });
