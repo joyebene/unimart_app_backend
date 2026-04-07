@@ -9,7 +9,7 @@ export class UserService {
   // ---------------- Get all users ----------------
   async getAllUsers(): Promise<Partial<User>[]> {
     return this.userRepository.find({
-      select: ["id", "fullName", "email", "avatarUrl", "bio", "location", "phone", "createdAt", "status"],
+      select: ["id", "fullName", "email", "avatarUrl", "bio", "location", "phone", "createdAt", "status", "isFeaturedSeller"],
     });
   }
 
@@ -17,7 +17,7 @@ export class UserService {
   async getUserById(userId: string): Promise<Partial<User> | null> {
     return this.userRepository.findOne({
       where: { id: userId },
-      select: ["id", "fullName", "email", "avatarUrl", "bio", "location", "phone", "createdAt", "productCount", "status"],
+      select: ["id", "fullName", "email", "avatarUrl", "bio", "location", "phone", "createdAt", "productCount", "status", "isFeaturedSeller"],
     });
   }
 
@@ -29,7 +29,6 @@ export class UserService {
       .addSelect("u.otp")
       .addSelect("u.otpExpiresAt")
       .addSelect("u.refreshToken")
-      // DO NOT add "u.password" here — keep it hidden for security
       .getOne();
   }
 
@@ -110,7 +109,7 @@ export class UserService {
     const user = await this.userRepository
       .createQueryBuilder("user")
       .where("user.email = :email", { email })
-      .addSelect("user.password") // Explicitly select the password
+      .addSelect("user.password")
       .getOne();
 
     if (!user) return null;

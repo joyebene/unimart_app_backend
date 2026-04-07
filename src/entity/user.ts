@@ -57,6 +57,9 @@ export class User {
   @Column()
   phone!: string;
 
+  @Column({ default: false })
+  isFeaturedSeller!: boolean;
+
   // email verification
   @Column({ default: false })
   isEmailVerified!: boolean;
