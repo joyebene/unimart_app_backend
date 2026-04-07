@@ -11,7 +11,8 @@ import feedbackRoutes from "./feedback";
 import supportMessageRoutes from "./support-message";
 import userSettingRoutes from "./user-setting";
 import reportRoutes from "./report";
-import deviceRoutes from "./device";;
+import deviceRoutes from "./device";
+import paymentRoutes from "./payment";
 
 const rootRoute = Router();
 
@@ -28,6 +29,7 @@ rootRoute.use("/support-message", supportMessageRoutes);
 rootRoute.use("/user-setting", userSettingRoutes);
 rootRoute.use("/report", reportRoutes);
 rootRoute.use("/device", deviceRoutes);
+rootRoute.use("/payment", paymentRoutes);
 
 
 export default rootRoute;
