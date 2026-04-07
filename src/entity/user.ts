@@ -18,6 +18,7 @@ import { Message } from "./message";
  import { Notification } from "./notification";
  import { ManyToMany } from "typeorm";
  import { Device } from "./device";
+import { Payment } from "./payment";
 
  export enum UserStatus {
   ACTIVE = "active",
@@ -99,6 +100,9 @@ export class User {
 
   @OneToMany(() => Report, (report) => report.reporter)
   reports!: Report[];
+
+  @OneToMany(() => Payment, (payment) => payment.user)
+  payments!: Payment[];
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications!: Notification[];

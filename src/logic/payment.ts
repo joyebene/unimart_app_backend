@@ -1,3 +1,4 @@
+import { User } from "../entity/user";
 import { PaymentService } from "../service/paymentService";
 import { UserService } from "../service/userService";
 import { uploadFilesToCloudinary, UploadedFileInfo } from "../utils/cloudinary";
@@ -35,7 +36,7 @@ export class PaymentLogic {
 
     // Save payment in DB with status "pending"
     return this.paymentService.createPayment({
-      userId: user.id,
+      user: user as User,
       type,
       reference,
       amount,

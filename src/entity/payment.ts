@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from "typeorm";
+import { User } from "./user";
 
 export type PaymentType = "boost" | "featurebadge";
 export type PaymentStatus = "pending" | "completed" | "failed";
@@ -14,9 +15,6 @@ export interface PaymentProof {
 export class Payment {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
-
-  @Column()
-  userId!: string;
 
   @Column({ nullable: true })
   productId?: string;
@@ -35,6 +33,9 @@ export class Payment {
 
   @Column({ type: "enum", enum: ["pending", "completed", "failed"], default: "pending" })
   status!: PaymentStatus;
+
+  @ManyToOne(() => User, (user) => user.payments)
+  user!: User;
 
   @CreateDateColumn()
   createdAt!: Date;
