@@ -24,7 +24,7 @@ export class PaymentController {
   }
 
   async setFeatureSellerBadge(req: Request, res: Response) {
-    const { reference, amount } = req.body;
+    const { reference } = req.body;
     const userId = req.user!.id;
 
     try {
@@ -32,7 +32,7 @@ export class PaymentController {
         userId,
         "featurebadge",
         reference,
-        Number(amount),
+        Number(500),
         req.file as Express.Multer.File
       );
       res.status(201).json({ success: true, payment });
