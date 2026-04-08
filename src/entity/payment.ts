@@ -21,7 +21,7 @@ export class Payment {
   @Column()
   amount!: number;
 
-  @Column({ type: "jsonb", nullable: true })
+  @Column({ nullable: true })
   proof?: string;
 
   @Column({ nullable: true })

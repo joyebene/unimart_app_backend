@@ -22,7 +22,7 @@ export class Product {
   @Column("decimal", { precision: 10, scale: 2 })
   price!: number;
 
-  @Column( {nullable: true} )
+  @Column({ nullable: true })
   description!: string;
 
   @Column()
@@ -30,6 +30,15 @@ export class Product {
 
   @Column()
   imageCloudinaryId!: string;
+
+  @Column({ default: false })
+  isFeaturedProduct!: boolean;
+
+  @Column({ type: "int", nullable: true })
+  featuredDuration!: number | null;
+
+  @Column({ type: "timestamp", nullable: true })
+  featuredExpiresAt!: Date | null;
 
   @ManyToOne(() => User, (user) => user.products, { onDelete: "CASCADE" })
   seller!: User;

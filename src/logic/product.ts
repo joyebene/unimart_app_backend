@@ -101,4 +101,27 @@ export class ProductLogic {
   async getFeaturedProducts() {
     return this.productService.getFeaturedProducts();
   }
+
+  async recommendProduct(productId: string, durationDays: number) {
+    const product = await this.productService.getProductById(productId);
+
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + durationDays);
+
+    product.isFeaturedProduct = true;
+    product.featuredDuration = durationDays;
+    product.featuredExpiresAt = expiresAt;
+
+    return await this.productService.saveProduct(product);
+  }
+
+
+  async getRecommendedProducts() {
+    await this.productService.clearExpiredFeatured();
+    return this.productService.getRecommendedProducts();
+  }
 }

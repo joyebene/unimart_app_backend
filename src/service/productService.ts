@@ -47,4 +47,32 @@ export class ProductService {
       .getMany();
   }
 
+  async clearExpiredFeatured() {
+    await this.productRepo
+      .createQueryBuilder()
+      .update(Product)
+      .set({
+        isFeaturedProduct: false,
+        featuredDuration: null,
+        featuredExpiresAt: null,
+      })
+      .where("featuredExpiresAt < :now", { now: new Date() })
+      .execute();
+  }
+
+  async getRecommendedProducts() {
+    return this.productRepo
+      .createQueryBuilder("product")
+      .leftJoinAndSelect("product.seller", "seller")
+      .where("product.isFeaturedProduct = :isFeatured", { isFeatured: true })
+      .andWhere("product.featuredExpiresAt > :now", { now: new Date() })
+      .orderBy("product.createdAt", "DESC")
+      .take(20)
+      .getMany();
+  }
+
+  async saveProduct(product: Product) {
+  return this.productRepo.save(product);
+}
+
 }

@@ -51,5 +51,10 @@ export class ProductController {
     const products = await this.productLogic.getFeaturedProducts();
     res.status(200).json({ status: "success", data: products });
   });
+  
+  getRecommendedProducts = asyncHandler(async (req: Request, res: Response) => {
+    const products = await this.productLogic.getRecommendedProducts();
+    res.status(200).json({ status: "success", data: products });
+  });
 
 }

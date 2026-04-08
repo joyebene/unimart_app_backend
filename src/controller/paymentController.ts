@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
 import { PaymentLogic } from "../logic/payment";
 import { PaymentService } from "../service/paymentService";
+import { ProductService } from "../service/productService";
 
 
 const paymentLogic = new PaymentLogic();
 const paymentService = new PaymentService();
+const productService = new ProductService();
 
 export class PaymentController {
   async submitBoostProduct(req: Request, res: Response) {
-    const { reference, amount } = req.body;
+    const { productId, reference, amount } = req.body;
     const userId = req.user!.id;
 
     try {
@@ -17,7 +19,8 @@ export class PaymentController {
         "boost",
         reference,
         Number(amount),
-        req.file as Express.Multer.File
+        req.file as Express.Multer.File,
+        productId,
       );
       res.status(201).json({ success: true, payment });
     } catch (err: any) {
@@ -56,7 +59,23 @@ export class PaymentController {
     const { id } = req.params;
     try {
       const payment = await paymentService.getPaymentById(id as string);
-      res.json({ success: true, payment });
+
+
+      if (!payment) {
+        return res.status(404).json({
+          success: false,
+          message: "Payment not found",
+        });
+      }
+
+      let product = null;
+
+      // If payment has productId → fetch product
+      if (payment.productId) {
+        product = await productService.getProductById(payment.productId);
+      }
+
+      res.json({ success: true, payment, product });
     } catch (err: any) {
       res.status(400).json({ success: false, message: err.message });
     }

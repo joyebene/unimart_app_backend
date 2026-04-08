@@ -12,6 +12,7 @@ productRoutes.get("/", productController.getAllProducts);
 productRoutes.get("/my-products", authenticateUser, productController.getLoggedInUserProducts);
 productRoutes.get("/my-products/:id", authenticateUser, productController.getUserProducts);
 productRoutes.get("/featured", productController.getFeaturedProducts);
+productRoutes.get("/recommended", productController.getRecommendedProducts);
 productRoutes.get("/:id", productController.getProductById);
 productRoutes.delete("/:id", authenticateUser, productController.deleteProduct);
  
