@@ -82,7 +82,9 @@ export class PaymentController {
   }
 
   async updatePaymentStatus(req: Request, res: Response) {
-    const { paymentId, status } = req.body;
+    const { status } = req.body;
+
+    const paymentId = req.query.id as string;
 
     try {
       const payment = await paymentLogic.updatePaymentStatus(paymentId, status);
