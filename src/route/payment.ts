@@ -13,6 +13,7 @@ router.post("/feature", authenticateUser, upload.single("paymentProof"), control
 
 // Admin routes
 router.get("/", authenticateUser, controller.fetchAllPayments.bind(controller));
+router.get("/:id", authenticateUser, controller.getPaymentById.bind(controller));
 router.put("/status", authenticateUser, controller.updatePaymentStatus.bind(controller));
 
 export default router;

@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import { PaymentLogic } from "../logic/payment";
+import { PaymentService } from "../service/paymentService";
 
 
 const paymentLogic = new PaymentLogic();
+const paymentService = new PaymentService();
 
 export class PaymentController {
   async submitBoostProduct(req: Request, res: Response) {
@@ -47,6 +49,16 @@ export class PaymentController {
       res.json({ success: true, payments });
     } catch (err: any) {
       res.status(500).json({ success: false, message: err.message });
+    }
+  }
+
+  async getPaymentById(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      const payment = await paymentService.getPaymentById(id as string);
+      res.json({ success: true, payment });
+    } catch (err: any) {
+      res.status(400).json({ success: false, message: err.message });
     }
   }
 
