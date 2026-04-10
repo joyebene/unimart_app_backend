@@ -1,4 +1,5 @@
 import { User } from "../entity/user";
+import { NotificationService } from "../service/notificationService";
 import { PaymentService } from "../service/paymentService";
 import { UserService } from "../service/userService";
 import { uploadFilesToCloudinary, UploadedFileInfo } from "../utils/cloudinary";
@@ -8,6 +9,7 @@ export class PaymentLogic {
   private paymentService = new PaymentService();
   private productLogic = new ProductLogic();
   private userService = new UserService();
+  private notificationService = new NotificationService();
 
   // Create payment with screenshot proof
   async createPayment(
@@ -31,6 +33,12 @@ export class PaymentLogic {
 
 
     const proof = uploaded[0]
+
+    await this.notificationService.createNotification(
+      user as User,
+      "New Payment Request",
+      `You have successfully requested for a ${type === "boost" ? "boost product purchase" : "feature seller badge purchase"} at ${amount} naira, It will be approved under 24 hours.`
+    );
 
     // Save payment in DB with status "pending"
     return this.paymentService.createPayment({
@@ -87,10 +95,30 @@ export class PaymentLogic {
 
       // FEATURE SELLER BADGE
       if (payment.type === "featurebadge") {
+        const now = new Date();
+
+        let expiresAt = payment.user.featuredSellerExpiresAt;
+
+        if (expiresAt && expiresAt > now) {
+          // extend existing
+          expiresAt.setMonth(expiresAt.getMonth() + 1);
+        } else {
+          // start fresh
+          expiresAt = new Date();
+          expiresAt.setMonth(expiresAt.getMonth() + 1);
+        }
+
         await this.userService.updateUser(payment.user.id, {
           isFeaturedSeller: true,
+          featuredSellerExpiresAt: expiresAt,
         });
       }
+
+      await this.notificationService.createNotification(
+        payment.user as User,
+        "Payment Approval",
+        `Your payment request have successfully been approved for a ${payment.type === "boost" ? "boost product purchase" : "feature seller badge purchase"} at ${payment.amount} naira.`
+      );
     }
 
     return updatedPayment;

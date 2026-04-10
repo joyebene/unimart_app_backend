@@ -10,9 +10,25 @@ export class UserLogic {
     return this.userService.getAllUsers();
   }
 
-  async getUserById(userId: string) {
-    return this.userService.getUserById(userId);
+ async getUserById(userId: string) {
+  const user = await this.userService.getUserById(userId);
+
+  if (!user) return null;
+
+  // Chec57k if featured seller expired
+  if (
+    user.isFeaturedSeller &&
+    user.featuredSellerExpiresAt &&
+    user.featuredSellerExpiresAt < new Date()
+  ) {
+    user.isFeaturedSeller = false;
+    user.featuredSellerExpiresAt = null;
+
+    await this.userService.save(user as User);
   }
+
+  return user;
+}
 
   async getAuthenticatedUser(userId: string) {
     return this.userService.getUserById(userId);

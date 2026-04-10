@@ -14,16 +14,16 @@ import { SupportMessage } from "./support-message";
 import { Report } from "./report";
 import { Conversation } from "./conversation";
 import { Message } from "./message";
- import { Feedback } from "./feedback";
- import { Notification } from "./notification";
- import { ManyToMany } from "typeorm";
- import { Device } from "./device";
+import { Feedback } from "./feedback";
+import { Notification } from "./notification";
+import { ManyToMany } from "typeorm";
+import { Device } from "./device";
 import { Payment } from "./payment";
 
- export enum UserStatus {
+export enum UserStatus {
   ACTIVE = "active",
   BANNED = "banned",
- }
+}
 
 @Entity("users")
 export class User {
@@ -60,6 +60,9 @@ export class User {
 
   @Column({ default: false })
   isFeaturedSeller!: boolean;
+
+  @Column({ type: "timestamptz", nullable: true })
+  featuredSellerExpiresAt!: Date | null;
 
   // email verification
   @Column({ default: false })
