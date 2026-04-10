@@ -3,6 +3,7 @@ import { NotificationService } from "../service/notificationService";
 import { PaymentService } from "../service/paymentService";
 import { UserService } from "../service/userService";
 import { uploadFilesToCloudinary, UploadedFileInfo } from "../utils/cloudinary";
+import { sendNotificationEmail } from "../utils/emailNotif";
 import { ProductLogic } from "./product";
 
 export class PaymentLogic {
@@ -23,6 +24,9 @@ export class PaymentLogic {
     const user = await this.userService.getUserById(userId);
     if (!user) throw new Error("User not found");
 
+    const adminUser = await this.userService.getUserByEmail("joyebene153@gmail.com");
+    if (!adminUser) throw new Error("Admin user not found");
+
     if (!file) throw new Error("Payment proof is required");
 
     // Upload proof to Cloudinary
@@ -39,6 +43,8 @@ export class PaymentLogic {
       "New Payment Request",
       `You have successfully requested for a ${type === "boost" ? "boost product purchase" : "feature seller badge purchase"} at ${amount} naira, It will be approved under 24 hours.`
     );
+
+    await sendNotificationEmail(adminUser as User, "New Payment Request", `${user.fullName} successfully requested for a ${type === "boost" ? "boost product purchase" : "feature seller badge purchase"} at ${amount} naira, Please review in 24 hours.`);
 
     // Save payment in DB with status "pending"
     return this.paymentService.createPayment({
