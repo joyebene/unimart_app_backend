@@ -45,23 +45,12 @@ export class NotificationService {
  
   }
 
-  async createBulkNotifications(
-    notifications: { user: User; title: string; body: string }[]
-  ): Promise<void> {
-    const newNotifications = this.notificationRepository.create(notifications);
-    await this.notificationRepository.save(newNotifications);
+  async getNotifications(userId: string): Promise<Notification[]> {
+    return this.notificationRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: "DESC" },
+    });
   }
-
-  async getRecentNotifications(userIds: string[]): Promise<Notification[]> {
-    return this.notificationRepository
-      .createQueryBuilder("notification")
-      .where("notification.userId IN (:...userIds)", { userIds })
-      .andWhere("notification.createdAt > :date", {
-        date: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      }) // 24 hours
-      .getMany();
-  }
-
 
   async markAsRead(notificationId: string, userId: string): Promise<Notification | null> {
     const notification = await this.notificationRepository.findOne({
