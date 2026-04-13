@@ -181,4 +181,14 @@ export class UserService {
     return this.userRepository.findOne({ where: { id: userId } });
   }
 
+  async getRandom50Users(limit: number = 50): Promise<User[]> {
+    return this.userRepository
+      .createQueryBuilder("user")
+      .where("user.status = :status", { status: UserStatus.ACTIVE })
+      .andWhere("user.email IS NOT NULL")
+      .orderBy("RANDOM()")
+      .limit(limit)
+      .getMany();
+  }
+
 }

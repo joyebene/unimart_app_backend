@@ -2,6 +2,7 @@ import { User } from "../entity/user";
 import { NotificationSettingService } from "../service/notificationSettingService";
 import { UserService } from "../service/userService";
 
+
 export class NotificationSettingLogic {
   private notificationSettingService = new NotificationSettingService();
   private userService = new UserService();
@@ -23,4 +24,5 @@ export class NotificationSettingLogic {
   async updateNotificationSettings(userId: string, updates: any) {
     return this.notificationSettingService.updateNotificationSettings(userId, updates);
   }
+
 }

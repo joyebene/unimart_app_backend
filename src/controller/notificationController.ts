@@ -23,4 +23,29 @@ export class NotificationController {
     const result = await this.notificationLogic.markAllAsRead(userId);
     res.status(200).json({ status: "success", data: result });
   });
+
+  sendAdminNotification = asyncHandler(async (req, res) => {
+    try {
+
+      const { subject, body, limit } = req.body;
+
+      if (!subject || !body) {
+        res.status(400).json({ message: "Subject and body are required" });
+      }
+
+      const result = await this.notificationLogic.sendBulkNotificationFromAdmin({
+        subject,
+        body,
+        limit,
+      });
+
+      res.json({
+        message: "Notification sent successfully",
+        ...result,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to send notifications" });
+    }
+  });
 }
