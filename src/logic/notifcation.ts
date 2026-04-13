@@ -7,13 +7,19 @@ export class NotificationLogic {
   private notificationService = new NotificationService();
   private userService = new UserService();
 
-  async createNotification(userId: string, title: string, body: string) {
-    const user = await this.userService.getUserById(userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    return this.notificationService.createNotification(user as User, title, body);
+  async createBulkNotification(
+    users: User[],
+    title: string,
+    body: string
+  ): Promise<void> {
+    const notifications = users.map((user) => ({
+      user,
+      title,
+      body,
+    }));
+    await this.notificationService.createBulkNotifications(notifications);
   }
+
 
   async getNotifications(userId: string) {
     return this.notificationService.getNotifications(userId);
@@ -43,31 +49,34 @@ export class NotificationLogic {
   }) {
     const users = await this.userService.getRandom50Users(limit);
 
-    const chunkSize = 10;
-
-    for (let i = 0; i < users.length; i += chunkSize) {
-      const chunk = users.slice(i, i + chunkSize);
-
-      await Promise.all(
-        chunk.map((user) =>
-          sendNotificationEmail(
-            user,
-            subject,
-            `
-            <p>Hello ${user.fullName || "User"},</p>
-            ${body}
-          `
-          )
-        )
+    // Filter out users who have already received this notification
+    const recentNotifications =
+      await this.notificationService.getRecentNotifications(
+        users.map((u) => u.id)
       );
+    const notifiedUserIds = new Set(
+      recentNotifications.map((n) => n.user.id)
+    );
+    const usersToSend = users.filter((u) => !notifiedUserIds.has(u.id));
 
-      // prevent Brevo rate limit
-      await new Promise((r) => setTimeout(r, 2000));
+    if (usersToSend.length === 0) {
+      return {
+        totalSelected: users.length,
+        totalSent: 0,
+        message: "All selected users have already received this notification.",
+      };
     }
+
+    await this.createBulkNotification(
+      usersToSend,
+      subject,
+      body
+    );
+
 
     return {
       totalSelected: users.length,
-      totalSent: users.length,
+      totalSent: usersToSend.length,
     };
   }
 }
