@@ -8,7 +8,7 @@ import upload from "../config/multer";
 const router = Router();
 const controller = new UserController();
 
-router.get("/", controller.getAllUsers);
+router.get("/", authenticateUser, controller.getAllUsers);
 router.get("/me", authenticateUser, controller.getAuthenticatedUser);
 router.put("/me", authenticateUser, controller.updateUser);
 router.put("/:userId", authenticateUser, controller.updateUserStatus);
