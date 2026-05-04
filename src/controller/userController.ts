@@ -7,7 +7,13 @@ export class UserController {
   private userLogic = new UserLogic();
 
   
-  getAllUsers = asyncHandler(async (_req: Request, res: Response) => {
+  getAllUsers = asyncHandler(async (req: Request, res: Response) => {
+
+    if (!req.user || req.user.email !== "admin@unimart.com") {
+      res.status(403);
+      throw new Error("Forbidden: You do not have permission to access this resource.");
+    }
+
     const users = await this.userLogic.getAllUsers();
 
     res.status(200).json({
